@@ -1,6 +1,9 @@
 import BookmarkIcon from "./BookmarkIcon";
 
 export default function JobItemContent() {
+
+  return <EmptyJobContent />;
+
   return (
     <section className="job-details">
       <div>
