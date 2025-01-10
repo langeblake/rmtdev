@@ -1,36 +1,53 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Background from "./Background";
 import Container from "./Container";
 import Footer from "./Footer";
-import Header from "./Header";
+import Header, { HeaderTop } from "./Header";
+import BookmarksButton from "./BookmarksButton";
+import Logo from "./Logo";
+import SearchForm from "./SearchForm";
+import JobItemContent from "./JobItemContent";
+import Sidebar, { SidebarTop } from "./Sidebar";
+import JobList from "./JobList";
+import PaginationControls from "./PaginationControls";
+import ResultsCount from "./ResultsCount";
+import SortingControls from "./SortingControls";
+import { useJobItems } from "../lib/hooks";
 
 function App() {
   const [searchText, setSearchText] = useState("");
-  const [jobItems, setJobItems] = useState([]);
+  const { jobItems, isLoading } = useJobItems(searchText);
 
-  useEffect(() => {
-    if (!searchText) return;
+  return (
+    <>
+      <Background />
 
-    const fetchData = async () => {
-      const response = await fetch(
-        `https://bytegrad.com/course-assets/projects/rmtdev/api/data?search=${searchText}`
-      );
+      <Header>
+        <HeaderTop>
+          <Logo />
+          <BookmarksButton />
+        </HeaderTop>
 
-      const data = await response.json();
-      setJobItems(data.jobItems);
-    };
-    fetchData();
-  }, [searchText]);
-  
-  return <>
-    <Background />
+        <SearchForm searchText={searchText} setSearchText={setSearchText} />
+      </Header>
 
-    <Header searchText={searchText} setSearchText={setSearchText}/>
+      <Container>
+        <Sidebar>
+          <SidebarTop>
+            <ResultsCount />
+            <SortingControls />
+          </SidebarTop>
 
-    <Container jobItems={jobItems}/>
+          <JobList jobItems={jobItems} isLoading={isLoading} />
 
-    <Footer />
-  </>;
+          <PaginationControls />
+        </Sidebar>
+        <JobItemContent />
+      </Container>
+
+      <Footer />
+    </>
+  );
 }
 
 export default App;
