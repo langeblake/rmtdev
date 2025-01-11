@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { JobItem, JobItemExpanded } from "./types";
 import { BASE_API_URL } from "./constants";
 import { useQuery } from "@tanstack/react-query";
 import { handlError } from "./utils";
+import { BookmarksContext } from "../contexts/BookMarksContextProvider";
 
 ////////////////////////
 
@@ -115,4 +116,28 @@ export function useDebounce<T>(value: T, delay = 500): T {
   }, [value, delay]);
 
   return debouncedValue;
+}
+
+
+
+export function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const [value, setValue] = useState(() =>
+    JSON.parse(localStorage.getItem(key) || JSON.stringify(initialValue))
+  );
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [value, key]);
+
+  return [value, setValue] as const;
+}
+
+////////////////////////
+
+export function useBookmarksContext() {
+  const context = useContext(BookmarksContext);
+  if (!context) {
+      throw new Error("useBookmarks must be used within a BookmarksProvider");
+  }
+  return context;
 }
